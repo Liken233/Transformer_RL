@@ -1,0 +1,34 @@
+{
+    "Transformer": {
+        "mean_error_deg": 2.7442538738250732,
+        "std_error_deg": 0.0,
+        "min_error_deg": 0.0,
+        "final_error_deg": 1.3533881902694702,
+        "total_reward": 9381.255815074423,
+        "rmse_deg": 10.514166831970215
+    },
+    "MLP": {
+        "mean_error_deg": 2.6297976970672607,
+        "std_error_deg": 0.0,
+        "min_error_deg": 0.0,
+        "final_error_deg": 0.5681419372558594,
+        "total_reward": 9148.191495716466,
+        "rmse_deg": 10.157567977905273
+    },
+    "LSTM": {
+        "mean_error_deg": 4.001560688018799,
+        "std_error_deg": 0.0,
+        "min_error_deg": 0.0,
+        "final_error_deg": 1.2102479934692383,
+        "total_reward": 8696.583333736899,
+        "rmse_deg": 13.107598304748535
+    },
+    "CNN": {
+        "mean_error_deg": 3.0618081092834473,
+        "std_error_deg": 0.0,
+        "min_error_deg": 0.0,
+        "final_error_deg": 0.7314722537994385,
+        "total_reward": 8984.303989470885,
+        "rmse_deg": 10.755772590637207
+    }
+}
