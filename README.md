@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 ## 运行约定
 
-请在本目录（`copy`）作为当前工作目录执行命令。所有入口脚本都包含项目根路径引导，移动到二级目录后仍可正确导入 `environments`、`policy` 和 `extractor`。
+请在本目录作为当前工作目录执行命令。所有入口脚本都包含项目根路径引导，移动到二级目录后仍可正确导入 `environments`、`policy` 和 `extractor`。
 
 ### 训练
 
