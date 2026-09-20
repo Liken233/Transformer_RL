@@ -1,0 +1,5 @@
+stack_frames,mean_abs_error_deg,mean_inference_ms,max_inference_ms,steps,model_path
+1,30.452565,0.805363,2.330146,6715,/home/y/vscode_ws/xuan/PPTransformer/experiments/20260914_140158_random_transformer_nenv30_len1/models/final_model.zip
+2,10.984342,0.798685,1.763592,10000,/home/y/vscode_ws/xuan/PPTransformer/experiments/20260914_111531_random_transformer_nenv30_len2/models/final_model.zip
+4,6.793833,0.806797,1.908531,10000,/home/y/vscode_ws/xuan/PPTransformer/experiments/20260913_172902_random_transformer_nenv30_len4/models/final_model.zip
+8,6.670781,0.800284,1.408106,10000,/home/y/vscode_ws/xuan/PPTransformer/experiments/20260913_200607_random_transformer_nenv30_len8/models/final_model.zip
