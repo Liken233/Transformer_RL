@@ -91,7 +91,7 @@ class RealFlexArmTrackingEnv(gym.Env):
         self.p3 = (2.0 * self.p2 + self.q2) / (4.0 * self.xigema * self.wn)
         self.p1 = 2.0 * self.xigema * self.wn * self.p2 + self.wn * self.p3
 
-        self.current_max = 50.0
+        self.current_max = 500.0
         self.action_space = spaces.Box(
             low=-self.current_max, high=self.current_max,
             shape=(1,), dtype=np.float32
