@@ -1,34 +1,51 @@
-# Simulink 柔性关节机械臂 PPO 工程
+# Transformer-Based Temporal RL for Series Elastic Actuator Control
 
-本目录包含基于 Stable-Baselines3 PPO 的柔性关节机械臂跟踪控制实验代码，环境通过 UDP 与 MATLAB/Simulink 交互。
+This repository contains the experiment code for PPO-based tracking control of a flexible-joint (series elastic) robot arm, built on Stable-Baselines3. The environment communicates with MATLAB/Simulink over UDP. The paper associated with this repository: *Transformer-Based Temporal Reinforcement Learning for Series Elastic Actuator Control*.
 
-## 目录结构
+> 中文说明见 [README_zh.md](README_zh.md)。
+
+## Repository Structure
 
 ~~~text
-copy/
-├── training/                 # 训练入口
-│   ├── train_simulink.py             # 基线 PPO/MLP
-│   ├── train_simulink_cnn.py         # CNN 策略
-│   ├── train_simulink_lstm.py        # LSTM 策略
-│   └── train_simulink_transformer.py # Transformer 策略
-├── evaluation/               # 模型评估与模型对比
-│   ├── eval_model.py                  # 3D 环境评估
+├── training/                 # Training entry points
+│   ├── train_simulink.py             # Baseline PPO/MLP
+│   ├── train_simulink_cnn.py         # CNN policy
+│   ├── train_simulink_lstm.py        # LSTM policy
+│   └── train_simulink_transformer.py # Transformer policy
+├── evaluation/               # Model evaluation and multi-model comparison
+│   ├── eval_model.py                  # 3D environment evaluation
 │   ├── eval_cnn.py / eval_lstm.py / eval_transformer.py
-│   ├── eval_transformer_single.py    # 单模型评估
-│   └── eval_single.py                 # 多模型对比
-├── environments/             # Gymnasium 环境封装
-│   ├── simulink_env.py                # UDP/Simulink 环境
-│   └── simulink_3d_env.py            # 3D 渲染环境
-├── extractor/                # CNN/LSTM/Transformer 特征提取器
-├── policy/                   # 对应 Actor-Critic 策略
-├── visualization/            # 评估 CSV 可视化（visial_eval.py）
+│   ├── eval_transformer_single.py    # Single-model evaluation
+│   └── eval_single.py                 # Multi-model comparison
+├── environments/             # Gymnasium environment wrappers
+│   ├── simulink_env.py                # UDP/Simulink environment
+│   └── simulink_3d_env.py            # 3D rendering environment
+├── extractor/                # CNN/LSTM/Transformer feature extractors
+├── policy/                   # Corresponding Actor-Critic policies
+├── visualization/            # Evaluation CSV visualization (visial_eval.py)
+├── experiment_data/          # Recorded experiment datasets (see below)
 ├── requirements.txt
 └── environment.yml
 ~~~
 
-## 安装环境
+### Experiment Data (`experiment_data/`)
 
-建议使用 Python 3.10 的 Conda 环境：
+~~~text
+experiment_data/
+├── simulation_step_response/            # Simulated step-response experiment
+├── simulation_sinusoidal_tracking/      # Simulated sinusoidal-tracking experiment
+├── simulation_multi_model_comparison/   # Simulated MLP/LSTM/CNN/Transformer comparison
+├── hardware_multi_target_step/          # Hardware multi-target step experiment
+├── hardware_sinusoidal_tracking/        # Hardware sinusoidal-tracking experiment
+├── hardware_payload_experiment/         # Hardware payload experiment (0/400/800/1200 g)
+└── window_length_ablation/              # Historical window length ablation (L = 1/2/4/8)
+~~~
+
+Each directory contains raw records (`.mat`/`.csv`), processed data, summary metrics, plotting scripts, and the figures used in the paper.
+
+## Installation
+
+A Python 3.10 Conda environment is recommended:
 
 ~~~powershell
 conda env create -f environment.yml
@@ -36,13 +53,13 @@ conda activate bullet_arm
 pip install -r requirements.txt
 ~~~
 
-也可以直接在已有 Python 环境中安装 `requirements.txt`。运行前请确认 `stable-baselines3`、`gymnasium`、`torch` 和 `matplotlib` 可导入。
+Alternatively, install `requirements.txt` directly into an existing Python environment. Before running, make sure `stable-baselines3`, `gymnasium`, `torch`, and `matplotlib` can be imported.
 
-## 运行约定
+## Usage
 
-请在本目录作为当前工作目录执行命令。所有入口脚本都包含项目根路径引导，移动到二级目录后仍可正确导入 `environments`、`policy` 和 `extractor`。
+Run all commands with this directory as the working directory. Every entry script bootstraps the project root path, so imports of `environments`, `policy`, and `extractor` keep working from subdirectories.
 
-### 训练
+### Training
 
 ~~~powershell
 python training/train_simulink.py --exp_name baseline --target_type random
@@ -51,32 +68,32 @@ python training/train_simulink_lstm.py --exp_name lstm --target_type random --st
 python training/train_simulink_transformer.py --exp_name transformer --target_type random --stack_frames 8 --feature_dim 5
 ~~~
 
-训练结果默认写入当前目录下的 `experiments/<实验名>/`，其中包含模型、日志、配置和评估数据。
+Training outputs are written to `experiments/<exp_name>/`, including models, logs, configurations, and evaluation data.
 
-### 评估
+### Evaluation
 
-将 `--model_path` 指向训练生成的 `.zip` 模型：
+Point `--model_path` to the `.zip` model produced by training:
 
 ~~~powershell
-python evaluation/eval_model.py --model_path experiments/<实验名>/models/final_model.zip
-python evaluation/eval_transformer.py --mode evaluate --model_path experiments/<实验名>/models/final_model.zip
-python evaluation/eval_lstm.py --mode evaluate --model_path experiments/<实验名>/models/final_model.zip
-python evaluation/eval_cnn.py --mode evaluate --model_path experiments/<实验名>/models/final_model.zip
+python evaluation/eval_model.py --model_path experiments/<exp_name>/models/final_model.zip
+python evaluation/eval_transformer.py --mode evaluate --model_path experiments/<exp_name>/models/final_model.zip
+python evaluation/eval_lstm.py --mode evaluate --model_path experiments/<exp_name>/models/final_model.zip
+python evaluation/eval_cnn.py --mode evaluate --model_path experiments/<exp_name>/models/final_model.zip
 python evaluation/eval_single.py --transformer <transformer.zip> --lstm <lstm.zip> --cnn <cnn.zip>
 ~~~
 
-`eval_*` 脚本默认将 CSV 和图表写入 `eval_data/` 或指定的 `--save_dir`。`eval_* --mode sync` 需要同时运行 MATLAB/Simulink，并确保 UDP 地址和端口参数匹配。
+The `eval_*` scripts write CSV files and figures to `eval_data/` or the `--save_dir` given on the command line. `eval_* --mode sync` requires MATLAB/Simulink to be running with matching UDP addresses and ports.
 
-### 可视化
+### Visualization
 
 ~~~powershell
 python visualization/visial_eval.py --csv eval_data/
 python visualization/visial_eval.py --csv eval_data/<file>.csv --out_dir visualization_results
 ~~~
 
-## 路径与兼容性说明
+## Notes on Paths and Compatibility
 
-- 模型路径、CSV 路径和输出目录支持相对路径；相对路径以执行命令时的当前目录为准。
-- 原脚本中的 Linux 示例模型路径仅作为历史默认值，实际使用时请显式传入 Windows 可访问的 `--model_path`。
-- `simulink_env.py` 使用 UDP 与外部 Simulink 通信；运行同步评估前请先启动对应模型。
-- `visial_eval.py` 文件名保留原样，以免影响已有调用；它的功能是评估结果可视化。
+- Model paths, CSV paths, and output directories accept relative paths, resolved against the current working directory.
+- The Linux sample model paths in the original scripts are historical defaults only; pass an explicit Windows-accessible `--model_path` in practice.
+- `simulink_env.py` communicates with external Simulink over UDP; start the corresponding model before running synchronized evaluation.
+- The file name `visial_eval.py` is kept as-is for backward compatibility; it performs visualization of evaluation results.
